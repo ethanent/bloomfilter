@@ -1,3 +1,3 @@
-module bloomfilter
+module github.com/ethanent/bloomfilter
 
-go 1.15
+go 1.16
