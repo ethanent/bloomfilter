@@ -11,6 +11,7 @@ type BloomFilter struct {
 	salts  [][]byte
 }
 
+// NewBloomFilter creates a BloomFilter of the given size and creates hashCount random salts
 func NewBloomFilter(size int, hashCount int) (*BloomFilter, error) {
 	bf := &BloomFilter{}
 
@@ -29,6 +30,7 @@ func NewBloomFilter(size int, hashCount int) (*BloomFilter, error) {
 	return bf, nil
 }
 
+// dataToPositions converts data to positions of bits within f.filter by performing a SHA256 for each f.salts
 func (f *BloomFilter) dataToPositions(d []byte) []int {
 	positions := []int{}
 
@@ -51,6 +53,7 @@ func (f *BloomFilter) dataToPositions(d []byte) []int {
 	return positions
 }
 
+// Add saves d to the internal BitVector
 func (f *BloomFilter) Add(d []byte) {
 	for _, pos := range f.dataToPositions(d) {
 		// Set bit at position
@@ -58,6 +61,7 @@ func (f *BloomFilter) Add(d []byte) {
 	}
 }
 
+// Probe tests whether d might be in the set
 func (f *BloomFilter) Probe(d []byte) bool {
 	for _, pos := range f.dataToPositions(d) {
 		// Check bit at position
@@ -69,6 +73,7 @@ func (f *BloomFilter) Probe(d []byte) bool {
 	return true
 }
 
+// Print logs information about the BloomFilter to STDOUT for debugging use
 func (f *BloomFilter) Print() {
 	fmt.Printf("BloomFilter [Hashes: %d]:\n", len(f.salts))
 
