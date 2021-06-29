@@ -13,9 +13,7 @@ go get github.com/ethanent/bloomfilter
 ## Example
 
 ```go
-bf, err := bloomfilter.NewBloomFilter(100000, 3)
-
-if err != nil { /* ... */ }
+bf := bloomfilter.NewBloomFilter(100000, 3)
 
 bf.Add([]byte("hello"))
 bf.Add([]byte("morning"))

@@ -1,8 +1,8 @@
 package bloomfilter
 
 import (
-	"crypto/rand"
 	"crypto/sha256"
+	"encoding/binary"
 	"fmt"
 )
 
@@ -12,22 +12,20 @@ type BloomFilter struct {
 }
 
 // NewBloomFilter creates a BloomFilter of the given size and creates hashCount random salts
-func NewBloomFilter(size int, hashCount int) (*BloomFilter, error) {
+func NewBloomFilter(size int, hashCount int) *BloomFilter {
 	bf := &BloomFilter{}
 
 	bf.filter = NewBitVector(size)
 
 	for i := 0; i < hashCount; i++ {
-		salt := make([]byte, 9)
+		salt := make([]byte, 8)
 
-		if _, err := rand.Read(salt); err != nil {
-			return nil, err
-		}
+		binary.LittleEndian.PutUint64(salt, uint64(i))
 
 		bf.salts = append(bf.salts, salt)
 	}
 
-	return bf, nil
+	return bf
 }
 
 // dataToPositions converts data to positions of bits within f.filter by performing a SHA256 for each f.salts
@@ -73,7 +71,7 @@ func (f *BloomFilter) Probe(d []byte) bool {
 	return true
 }
 
-// Print logs information about the BloomFilter to STDOUT for debugging use
+// Print prints information about the BloomFilter to STDOUT
 func (f *BloomFilter) Print() {
 	fmt.Printf("BloomFilter [Hashes: %d]:\n", len(f.salts))
 
